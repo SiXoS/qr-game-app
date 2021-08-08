@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">QR GAME</string>
+    <string name="scan_qr">SCAN QR</string>
+    <string name="score_capital">SCORE</string>
+    <string name="high_score_capital">HIGH SCORE</string>
+    <string name="score">Score</string>
+    <string name="high_score">High score</string>
+    <string name="game_history">GAME HISTORY</string>
+    <string name="show_stack_trace">Show stack trace</string>
+    <string name="close_game">Close</string>
+    <string name="rename">Rename</string>
+    <string name="rename_game">Rename \"%1$s\"</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="any_button_to_start">Hit any button to start</string>
+    <string name="game_over">Game over</string>
+    <string name="you_won_exclamation">You won!</string>
+    <string name="you_lost">You lost</string>
+    <string name="new_high_score">New high score:</string>
+    <string name="play_again">Play again</string>
+    <string name="load_qr_image">LOAD QR FROM DEVICE</string>
+    <string name="error">Error</string>
+    <string name="confirm_delete">Are you sure you want to permanently delete \"%1$s\"?</string>
+</resources>

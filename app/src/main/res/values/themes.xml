@@ -1,0 +1,44 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.QrGame" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <item name="android:titleTextColor">@color/oldBackground</item>
+        <item name="titleTextColor">@color/oldBackground</item>
+
+        <item name="android:fontFamily">@font/press_start_2p</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/activityBackground</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHighlight">@color/oldBackground</item>
+    </style>
+
+    <style name="Theme.QrGame.NoActionBar" parent="Theme.QrGame">
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.QrGame.NoActionBar.Fullscreen" parent="Theme.QrGame.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="Theme.QrGame.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="android:windowMinWidthMinor">80%</item>
+        <item name="android:windowMinWidthMajor">50%</item>
+    </style>
+    
+    <style name="Theme.QrGame.Dialog.Title" parent="Theme.QrGame">
+        <item name="android:textColor">@color/activityBackground</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="Theme.QrGame.Dialog.Content" parent="Theme.QrGame">
+        <item name="android:padding">10dp</item>
+    </style>
+
+</resources>

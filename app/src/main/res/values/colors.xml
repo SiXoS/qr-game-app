@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="oldBackground">#FF65815C</color>
+    <color name="black">#000000</color>
+
+    <color name="activityBackground">@color/oldBackground</color>
+    <color name="primary">@color/black</color>
+    <color name="onPrimary">@color/oldBackground</color>
+
+</resources>
