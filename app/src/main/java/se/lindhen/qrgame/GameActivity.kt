@@ -16,6 +16,7 @@ import android.view.WindowInsetsController
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import se.lindhen.qrgame.bytecode.QgDecompiler
@@ -48,6 +49,8 @@ class GameActivity : AppCompatActivity() {
     private var hasInitialized = false
     private var hasHitAButton = false
     private val gamePerformanceObserverScheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+    private var totalDt = 0
+    private val dtHistory = LinkedList<Int>()
 
     companion object {
         const val EXTRA_BYTECODE_PARAMETER = "bytecode"
@@ -78,16 +81,18 @@ class GameActivity : AppCompatActivity() {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        gamePerformanceObserverScheduler.shutdown()
+    }
+
     private fun verifyInitializationAndFirstIterationHalts() {
         gamePerformanceObserverScheduler.schedule({ verifyInitializeHasRunAndOneIterationHasRun() }, 1, TimeUnit.SECONDS)
     }
 
     private fun verifyInitializeHasRunAndOneIterationHasRun() {
         if (!hasInitialized || lastFinishedRun == 0L) {
-            stopPerformanceObserver()
-            program.cancel()
-            glSurface.pause()
-            runOnUiThread { showGameCanceledDialog() }
+            terminateGameDueToPerformance(R.string.forcefully_terminated_single)
         }
     }
 
@@ -96,21 +101,26 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun verifyProgramHasExecutedPastSecond() {
+        Log.i("GameActivity", "Average iteration runtime: ${totalDt / dtHistory.size}ms")
         val now = System.currentTimeMillis()
         if (now - lastFinishedRun > 1000) {
-            stopPerformanceObserver()
-            program.cancel()
-            glSurface.pause()
-            runOnUiThread { showGameCanceledDialog() }
+            terminateGameDueToPerformance(R.string.forcefully_terminated_single)
         }
+    }
+
+    private fun terminateGameDueToPerformance(@StringRes reasonResource: Int) {
+        stopPerformanceObserver()
+        program.cancel()
+        glSurface.pause()
+        runOnUiThread { showGameCanceledDialog(reasonResource) }
     }
 
     private fun stopPerformanceObserver() {
         gamePerformanceObserverScheduler.shutdown()
     }
 
-    private fun showGameCanceledDialog() {
-        TerminatedDialog()
+    private fun showGameCanceledDialog(@StringRes reasonResource: Int) {
+        TerminatedDialog(reasonResource)
             .show(supportFragmentManager, "terminated_dialog")
     }
 
@@ -263,6 +273,12 @@ class GameActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun checkAverageDtIsReasonable(averageDt: Float) {
+        if (averageDt > 50) { // 20 FPS
+            terminateGameDueToPerformance(R.string.forcefully_terminated_fps)
+        }
+    }
+
     inner class GameChangeListener: GameStateChangeListener {
 
         private var lastScore = 0
@@ -306,6 +322,14 @@ class GameActivity : AppCompatActivity() {
 
         override fun onIterationRun(dt: Int) {
             lastFinishedRun = System.currentTimeMillis()
+            totalDt += dt
+            dtHistory.addFirst(dt)
+            if (dtHistory.size > 60) {
+                totalDt -= dtHistory.removeLast()
+            }
+            if (dtHistory.size > 30) {
+                checkAverageDtIsReasonable(totalDt.toFloat() / dtHistory.size.toFloat())
+            }
         }
 
     }

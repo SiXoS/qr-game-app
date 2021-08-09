@@ -18,9 +18,10 @@
         android:theme="@style/Theme.QrGame.Dialog.Content">
 
         <TextView
+            android:id="@+id/terminated_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/forcefully_terminated"
+            android:text="@string/forcefully_terminated_single"
             android:padding="5dp"/>
 
         <LinearLayout
