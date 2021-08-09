@@ -8,5 +8,6 @@ interface GameStateChangeListener {
     fun lost()
     fun scoreChange(score: Int)
     fun onError(exception: RuntimeException)
+    fun onIterationRun(dt: Int)
 
 }

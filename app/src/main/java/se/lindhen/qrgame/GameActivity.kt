@@ -23,11 +23,14 @@ import se.lindhen.qrgame.db.Game
 import se.lindhen.qrgame.db.QrGameDatabase
 import se.lindhen.qrgame.dialogs.ErrorDialog
 import se.lindhen.qrgame.dialogs.GameOverDialog
+import se.lindhen.qrgame.dialogs.TerminatedDialog
 import se.lindhen.qrgame.program.InputManager
 import se.lindhen.qrgame.program.Program
-import java.lang.RuntimeException
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 
 class GameActivity : AppCompatActivity() {
@@ -41,7 +44,10 @@ class GameActivity : AppCompatActivity() {
     private lateinit var scoreTextField: TextView
     private lateinit var byteCode: ByteArray
     private lateinit var program: Program
+    private var lastFinishedRun = 0L
+    private var hasInitialized = false
     private var hasHitAButton = false
+    private val gamePerformanceObserverScheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
 
     companion object {
         const val EXTRA_BYTECODE_PARAMETER = "bytecode"
@@ -65,9 +71,47 @@ class GameActivity : AppCompatActivity() {
             highScoreTextField.text = game.highScore.toString()
 
             glSurface.setGameStateChangedListener(GameChangeListener())
+            verifyInitializationAndFirstIterationHalts() // If the initialization of the program caused by the next line never halts, this thread will stop it.
             glSurface.startGame(program)
+            hasInitialized = true
         }
 
+    }
+
+    private fun verifyInitializationAndFirstIterationHalts() {
+        gamePerformanceObserverScheduler.schedule({ verifyInitializeHasRunAndOneIterationHasRun() }, 1, TimeUnit.SECONDS)
+    }
+
+    private fun verifyInitializeHasRunAndOneIterationHasRun() {
+        if (!hasInitialized || lastFinishedRun == 0L) {
+            stopPerformanceObserver()
+            program.cancel()
+            glSurface.pause()
+            runOnUiThread { showGameCanceledDialog() }
+        }
+    }
+
+    private fun startGamePerformanceObserver() {
+        gamePerformanceObserverScheduler.scheduleAtFixedRate({ verifyProgramHasExecutedPastSecond() }, 1000, 1000, TimeUnit.MILLISECONDS)
+    }
+
+    private fun verifyProgramHasExecutedPastSecond() {
+        val now = System.currentTimeMillis()
+        if (now - lastFinishedRun > 1000) {
+            stopPerformanceObserver()
+            program.cancel()
+            glSurface.pause()
+            runOnUiThread { showGameCanceledDialog() }
+        }
+    }
+
+    private fun stopPerformanceObserver() {
+        gamePerformanceObserverScheduler.shutdown()
+    }
+
+    private fun showGameCanceledDialog() {
+        TerminatedDialog()
+            .show(supportFragmentManager, "terminated_dialog")
     }
 
     private fun createOrGetGameEntity(byteCode: ByteArray): Game {
@@ -150,6 +194,7 @@ class GameActivity : AppCompatActivity() {
             if (!hasHitAButton) {
                 hasHitAButton = true
                 anyButtonView.visibility = GONE
+                startGamePerformanceObserver()
                 glSurface.resume()
             }
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -198,7 +243,6 @@ class GameActivity : AppCompatActivity() {
 
     private fun updateHighScore(score: Int) {
         if (score > game.highScore) {
-            glSurface.pause()
             highScoreTextField.text = score.toString()
             game.highScore = score
             db.gameDao().update(game)
@@ -225,6 +269,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun won() {
             glSurface.pause()
+            stopPerformanceObserver()
             runOnUiThread {
                 val prevHighScore = game.highScore
                 updateHighScore(lastScore)
@@ -234,6 +279,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun lost() {
             glSurface.pause()
+            stopPerformanceObserver()
             runOnUiThread {
                 if (program.trackScore) {
                     val prevHighScore = game.highScore
@@ -253,8 +299,13 @@ class GameActivity : AppCompatActivity() {
         }
 
         override fun onError(exception: RuntimeException) {
-            showSevereErrorDialog("Encountered exception when executing game", exception)
             glSurface.pause()
+            stopPerformanceObserver()
+            showSevereErrorDialog("Encountered exception when executing game", exception)
+        }
+
+        override fun onIterationRun(dt: Int) {
+            lastFinishedRun = System.currentTimeMillis()
         }
 
     }

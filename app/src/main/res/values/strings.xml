@@ -21,4 +21,6 @@
     <string name="load_qr_image">LOAD QR FROM DEVICE</string>
     <string name="error">Error</string>
     <string name="confirm_delete">Are you sure you want to permanently delete \"%1$s\"?</string>
+    <string name="terminated">Terminated</string>
+    <string name="forcefully_terminated">The game has been forcefully terminated as it took too long to run a single iteration.</string>
 </resources>

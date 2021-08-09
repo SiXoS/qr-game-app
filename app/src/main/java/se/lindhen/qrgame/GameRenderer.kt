@@ -79,11 +79,12 @@ class GameRenderer: GLSurfaceView.Renderer {
         }
 
         val newRender = System.currentTimeMillis()
-        val dt = newRender - prevRender
+        val dt = (newRender - prevRender).toInt()
         prevRender = newRender
 
         try {
-            programIteration!!.accept(dt.toInt())
+            programIteration!!.accept(dt)
+            gameStateChangeListener?.onIterationRun(dt)
         } catch (e: RuntimeException) {
             crashed = true
             gameStateChangeListener?.onError(e)
@@ -103,6 +104,11 @@ class GameRenderer: GLSurfaceView.Renderer {
         }
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+
+        if (program!!.isCanceled) {
+            crashed = true
+            return
+        }
 
         GLES20.glUseProgram(shaderProgram)
 
