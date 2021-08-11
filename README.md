@@ -12,5 +12,5 @@ is resources. The applications employs the following security measures:
 1. The game is terminated if a program iteration, or game loop,
 takes more than a second to run.
 2. If a game has a very low frame rate it is terminated.
-3. TODO: If the system signals very low memory, the game is terminated.
+3. If the system signals very low memory, the game is terminated.
 

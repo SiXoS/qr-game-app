@@ -1,6 +1,7 @@
 package se.lindhen.qrgame
 
 import android.annotation.SuppressLint
+import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -101,6 +102,14 @@ class GameActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         adjustSideLayoutsToFillParent()
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level == ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL) {
+            Log.w("GameActivity", "Terminate due to low memory")
+            terminateGameDueToPerformance(R.string.forcefully_terminated_memory)
+        }
     }
 
     private fun verifyInitializationAndFirstIterationHalts() {

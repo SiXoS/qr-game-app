@@ -25,4 +25,5 @@
     <string name="terminated">Terminated</string>
     <string name="forcefully_terminated_single">The game has been forcefully terminated as it took too long to run a single iteration.</string>
     <string name="forcefully_terminated_fps">The game has been forcefully terminated due to excessive CPU usage and low frame rate.</string>
+    <string name="forcefully_terminated_memory">The game has been forcefully terminated due to high memory usage.</string>
 </resources>
