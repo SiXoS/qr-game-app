@@ -9,29 +9,32 @@ import android.widget.TextView
 import se.lindhen.qrgame.GameHistoryActivity
 import se.lindhen.qrgame.R
 
-class DeleteConfirmDialog constructor(private var gameName: String? = null, private var position: Int? = null): QrGameDialog() {
+class DeleteConfirmDialog constructor(private var gameName: String? = null, private var position: Int? = null, private var id: Int?): QrGameDialog() {
 
     companion object {
         const val BUNDLE_GAME_NAME = "game_name"
         const val BUNDLE_POSITION = "position"
+        const val BUNDLE_ID = "id"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         gameName = getFromStateOrFail(gameName, savedInstanceState?.getString(BUNDLE_GAME_NAME), BUNDLE_GAME_NAME)
         position = getFromStateOrFail(position, savedInstanceState?.getInt(BUNDLE_POSITION), BUNDLE_POSITION)
+        id = getFromStateOrFail(id, savedInstanceState?.getInt(BUNDLE_ID), BUNDLE_ID)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(BUNDLE_GAME_NAME, gameName!!)
         outState.putInt(BUNDLE_POSITION, position!!)
+        outState.putInt(BUNDLE_ID, id!!)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view.findViewById<Button>(R.id.delete_dialog_button).setOnClickListener {
-            (activity as GameHistoryActivity).onDelete(position!!)
+            (activity as GameHistoryActivity).onDelete(position!!, id!!)
             dismiss()
         }
         view.findViewById<TextView>(R.id.delete_dialog_message).text = getString(R.string.confirm_delete, gameName!!)

@@ -68,35 +68,42 @@ class GameHistoryActivity : AppCompatActivity() {
     private fun rename(position: Int) {
         val game = games[position]
         val previousName = game.name ?: game.hash.toString(16)
-        RenameDialog(previousName, position)
+        RenameDialog(previousName, position, game.id)
             .show(supportFragmentManager, "rename_dialog")
     }
 
-    fun onRename(position: Int, newName: String) {
+    fun onRename(position: Int, id: Int, newName: String) {
         val game = games[position]
-        game.name = newName
-        gameDao.update(game)
-        gameHistoryAdapter.notifyDataSetChanged()
+        if (game.id == id) {
+            game.name = newName
+            gameDao.update(game)
+            gameHistoryAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun delete(position: Int) {
         val game = games[position]
-        DeleteConfirmDialog(game.name ?: game.hash.toString(16), position)
+        DeleteConfirmDialog(game.name ?: game.hash.toString(16), position, game.id)
             .show(supportFragmentManager, "delete_confirm_dialog")
     }
 
-    fun onDelete(position: Int) {
+    fun onDelete(position: Int, id: Int) {
         val game = games[position]
-        gameDao.delete(game)
-        games.removeAt(position)
-        gameHistoryAdapter.notifyDataSetChanged()
+        if (game.id == id) {
+            gameDao.delete(game)
+            games.removeAt(position)
+            gameHistoryAdapter.notifyDataSetChanged()
+        }
     }
 
-    private fun showQr(position: Int) {
-        val intent = Intent(this, ShowQrActivity::class.java)
-        intent.putExtra(ShowQrActivity.EXTRA_GAME_NAME_PARAMETER, games[position].name)
-        intent.putExtra(ShowQrActivity.EXTRA_BYTECODE_PARAMETER, games[position].code)
-        startActivity(intent)
+    private fun showQr(position: Int, id: Int) {
+        val game = games[position]
+        if (game.id == id) {
+            val intent = Intent(this, ShowQrActivity::class.java)
+            intent.putExtra(ShowQrActivity.EXTRA_GAME_NAME_PARAMETER, game.name)
+            intent.putExtra(ShowQrActivity.EXTRA_BYTECODE_PARAMETER, game.code)
+            startActivity(intent)
+        }
     }
 
     inner class GameHistoryAdapter(val games: List<Game>) : BaseAdapter() {
@@ -109,7 +116,7 @@ class GameHistoryActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.game_history_date).text = dateFormat.format(OffsetDateTime.ofInstant(game.scanned.toInstant(), ZoneId.systemDefault()))
             view.findViewById<ImageButton>(R.id.game_history_delete).setOnClickListener { delete(position) }
             view.findViewById<ImageButton>(R.id.game_history_rename).setOnClickListener { rename(position) }
-            view.findViewById<ImageButton>(R.id.game_history_qr).setOnClickListener { showQr(position) }
+            view.findViewById<ImageButton>(R.id.game_history_qr).setOnClickListener { showQr(position, game.id) }
             return view
         }
 

@@ -85,7 +85,7 @@ class GameActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         glSurface.pause()
-        gamePerformanceObserverScheduler.shutdownNow()
+        stopPerformanceObserver()
         anyButtonView.text = getString(R.string.any_button_to_resume)
         anyButtonView.visibility = View.VISIBLE
         hasHitAButton = false
@@ -123,7 +123,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun startGamePerformanceObserver() {
-        gamePerformanceObserverScheduler.scheduleAtFixedRate({ verifyProgramHasExecutedPastSecond() }, 1000, 1000, TimeUnit.MILLISECONDS)
+        gamePerformanceObserverScheduler.scheduleAtFixedRate({ verifyProgramHasExecutedPastSecond() }, 1, 1, TimeUnit.SECONDS)
     }
 
     private fun verifyProgramHasExecutedPastSecond() {
