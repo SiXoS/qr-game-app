@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:innerRadiusRatio="1"
-    android:shape="rectangle">
-    <solid android:color="@color/black" />
-
-    <corners
-        android:radius="5dp"/>
-
-    <padding
-        android:bottom="10dp"
-        android:left="10dp"
-        android:right="10dp"
-        android:top="10dp"/>
-
-</shape>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="60.0"
+    android:viewportHeight="60.0">
+    <path
+        android:pathData="M0,0 L60,0 L0,60 z"
+        android:strokeColor="@color/black"
+        android:fillColor="@color/black"/>
+</vector>
 
