@@ -1,6 +1,7 @@
 package se.lindhen.qrgame.shape
 
 import kotlin.math.cos
+import kotlin.math.max
 import kotlin.math.sin
 
 class GlEllipse(x: Double, y: Double, width: Double, height: Double): GlShape(generateCircle(width.toFloat(), height.toFloat()), x, y) {
@@ -10,8 +11,8 @@ class GlEllipse(x: Double, y: Double, width: Double, height: Double): GlShape(ge
         private val radsPerDeg = Math.PI / 180.0
 
         private fun generateCircle(width: Float, height: Float): FloatArray {
-            val numPolygons = 20
-            val steps = 360/numPolygons
+            val numPolygons = max((max(width, height) / 5F).toInt(), 12)
+            val steps = 360F/numPolygons
             val coordsPerPolygon = 3*3 // three vertices with three coordinates each
             val arr = FloatArray(numPolygons * coordsPerPolygon)
             val xRadius = width / 2.0f
@@ -33,7 +34,7 @@ class GlEllipse(x: Double, y: Double, width: Double, height: Double): GlShape(ge
             return arr
         }
 
-        private fun coordsFromDegrees(degrees: Int): Pair<Float, Float> {
+        private fun coordsFromDegrees(degrees: Float): Pair<Float, Float> {
             val rad = degrees * radsPerDeg
             return Pair(cos(rad).toFloat(), sin(rad).toFloat())
         }
