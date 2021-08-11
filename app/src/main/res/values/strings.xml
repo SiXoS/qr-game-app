@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QR GAME</string>
+    <string name="app_name">QR Game</string>
     <string name="scan_qr">SCAN QR</string>
     <string name="score_capital">SCORE</string>
     <string name="high_score_capital">HIGH SCORE</string>
