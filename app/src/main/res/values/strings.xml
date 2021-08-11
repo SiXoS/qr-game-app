@@ -13,6 +13,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="any_button_to_start">Hit any button to start</string>
+    <string name="any_button_to_resume">Hit any button to resume</string>
     <string name="game_over">Game over</string>
     <string name="you_won_exclamation">You won!</string>
     <string name="you_lost">You lost</string>

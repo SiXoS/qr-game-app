@@ -53,6 +53,17 @@ class MainActivity : AppCompatActivity() {
             return aspectRatio(metrics.widthPixels, metrics.heightPixels)
         }
 
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
+        private const val PERMISSION_CAMERA_REQUEST = 1
+        private const val PERMISSION_STORAGE_REQUEST = 2
+        private const val IMAGE_PICK_RESPONSE = 10
+
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+        const val BUNDLE_SCANNING_QR = "scanning_qr"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -81,6 +92,16 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.game_history_button).setOnClickListener {
             startActivity(Intent(this, GameHistoryActivity::class.java))
         }
+        if (savedInstanceState?.getBoolean(BUNDLE_SCANNING_QR, false) == true) {
+            if (isCameraPermissionGranted()) {
+                previewView.postDelayed({ scanQr() }, 100)
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(BUNDLE_SCANNING_QR, cameraLayout.visibility == View.VISIBLE)
     }
 
     override fun onBackPressed() {
@@ -300,15 +321,5 @@ class MainActivity : AppCompatActivity() {
             return AspectRatio.RATIO_4_3
         }
         return AspectRatio.RATIO_16_9
-    }
-
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
-        private const val PERMISSION_CAMERA_REQUEST = 1
-        private const val PERMISSION_STORAGE_REQUEST = 2
-        private const val IMAGE_PICK_RESPONSE = 10
-
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 }

@@ -48,7 +48,7 @@ class GameActivity : AppCompatActivity() {
     private var lastFinishedRun = 0L
     private var hasInitialized = false
     private var hasHitAButton = false
-    private val gamePerformanceObserverScheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+    private var gamePerformanceObserverScheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var totalDt = 0
     private val dtHistory = LinkedList<Int>()
 
@@ -81,9 +81,26 @@ class GameActivity : AppCompatActivity() {
 
     }
 
-    override fun onStop() {
-        super.onStop()
-        gamePerformanceObserverScheduler.shutdown()
+    override fun onPause() {
+        super.onPause()
+        glSurface.pause()
+        gamePerformanceObserverScheduler.shutdownNow()
+        anyButtonView.text = getString(R.string.any_button_to_resume)
+        anyButtonView.visibility = View.VISIBLE
+        hasHitAButton = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dtHistory.clear()
+        if (gamePerformanceObserverScheduler.isShutdown) {
+            gamePerformanceObserverScheduler = Executors.newScheduledThreadPool(1)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        adjustSideLayoutsToFillParent()
     }
 
     private fun verifyInitializationAndFirstIterationHalts() {
@@ -223,11 +240,6 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        adjustSideLayoutsToFillParent()
-    }
-
     private fun adjustSideLayoutsToFillParent() {
         val leftButtons = findViewById<View>(R.id.left_buttons)
         val rightButtons = findViewById<View>(R.id.right_buttons)
@@ -322,13 +334,15 @@ class GameActivity : AppCompatActivity() {
 
         override fun onIterationRun(dt: Int) {
             lastFinishedRun = System.currentTimeMillis()
-            totalDt += dt
-            dtHistory.addFirst(dt)
-            if (dtHistory.size > 60) {
-                totalDt -= dtHistory.removeLast()
-            }
-            if (dtHistory.size > 30) {
-                checkAverageDtIsReasonable(totalDt.toFloat() / dtHistory.size.toFloat())
+            if (hasHitAButton) {
+                totalDt += dt
+                dtHistory.addFirst(dt)
+                if (dtHistory.size > 60) {
+                    totalDt -= dtHistory.removeLast()
+                }
+                if (dtHistory.size > 30) {
+                    checkAverageDtIsReasonable(totalDt.toFloat() / dtHistory.size.toFloat())
+                }
             }
         }
 
