@@ -3,6 +3,7 @@ package se.lindhen.qrgame
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import se.lindhen.qrgame.program.GameLoop
 import se.lindhen.qrgame.program.GameStatus
 import se.lindhen.qrgame.program.Program
 import se.lindhen.qrgame.shape.*
@@ -16,7 +17,7 @@ class GameRenderer: GLSurfaceView.Renderer {
 
     private var crashed = false
     private var gameStateChangeListener: GameStateChangeListener? = null
-    private var programIteration: Consumer<Int>? = null
+    private var programIteration: GameLoop? = null
     private var shaderProgram by Delegates.notNull<Int>()
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
@@ -83,7 +84,7 @@ class GameRenderer: GLSurfaceView.Renderer {
         prevRender = newRender
 
         try {
-            programIteration!!.accept(dt)
+            programIteration!!.run(dt)
             gameStateChangeListener?.onIterationRun(dt)
         } catch (e: RuntimeException) {
             crashed = true

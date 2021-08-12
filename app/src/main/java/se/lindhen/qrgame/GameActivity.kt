@@ -156,7 +156,7 @@ class GameActivity : AppCompatActivity() {
         val game = gameDao.getByHashCode(hash)
         if (game != null)
             return game
-        gameDao.insert(Game(0, hash, byteCode, null, 0, Date.from(Instant.now())))
+        gameDao.insert(Game(0, hash, byteCode, null, 0, Date()))
         return gameDao.getByHashCode(hash)!!
     }
 

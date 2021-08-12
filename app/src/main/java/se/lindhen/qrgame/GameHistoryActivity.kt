@@ -13,6 +13,8 @@ import se.lindhen.qrgame.db.GameDao
 import se.lindhen.qrgame.db.QrGameDatabase
 import se.lindhen.qrgame.dialogs.DeleteConfirmDialog
 import se.lindhen.qrgame.dialogs.RenameDialog
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -20,7 +22,7 @@ import java.time.format.DateTimeFormatter
 
 class GameHistoryActivity : AppCompatActivity() {
 
-    private val dateFormat = DateTimeFormatter.ofPattern("d MMMM uuuu")
+    private val dateFormat = SimpleDateFormat("d MMMM yyyy")
     private lateinit var games: MutableList<Game>
     private lateinit var gameDao: GameDao
     private lateinit var gameHistoryAdapter: GameHistoryAdapter
@@ -113,7 +115,7 @@ class GameHistoryActivity : AppCompatActivity() {
 
             val game = games[position]
             view.findViewById<TextView>(R.id.game_history_name).text = game.name ?: game.hash.toString(16)
-            view.findViewById<TextView>(R.id.game_history_date).text = dateFormat.format(OffsetDateTime.ofInstant(game.scanned.toInstant(), ZoneId.systemDefault()))
+            view.findViewById<TextView>(R.id.game_history_date).text = dateFormat.format(game.scanned)
             view.findViewById<ImageButton>(R.id.game_history_delete).setOnClickListener { delete(position) }
             view.findViewById<ImageButton>(R.id.game_history_rename).setOnClickListener { rename(position) }
             view.findViewById<ImageButton>(R.id.game_history_qr).setOnClickListener { showQr(position, game.id) }
