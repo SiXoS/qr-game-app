@@ -2,6 +2,7 @@ package se.lindhen.qrgame
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +19,12 @@ import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 class GameHistoryActivity : AppCompatActivity() {
 
-    private val dateFormat = SimpleDateFormat("d MMMM yyyy")
+    private val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale.US)
     private lateinit var games: MutableList<Game>
     private lateinit var gameDao: GameDao
     private lateinit var gameHistoryAdapter: GameHistoryAdapter
