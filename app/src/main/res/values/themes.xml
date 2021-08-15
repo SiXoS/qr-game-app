@@ -16,6 +16,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorLink">@color/black</item>
         <item name="android:textColorHighlight">@color/oldBackground</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="Theme.QrGame.NoActionBar" parent="Theme.QrGame">

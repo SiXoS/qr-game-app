@@ -9,11 +9,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -75,6 +77,8 @@ class MainActivity : AppCompatActivity() {
         previewView = findViewById(R.id.preview_view)
         cameraLayout = findViewById(R.id.qr_scan_view)
         findViewById<Button>(R.id.qr_scan_cancel).setOnClickListener { if (cameraActive) turnOffCamera() }
+
+        findViewById<TextView>(R.id.policy_link).movementMethod = LinkMovementMethod.getInstance()
 
         barcodeScanner = BarcodeScanning.getClient(
             BarcodeScannerOptions.Builder()
