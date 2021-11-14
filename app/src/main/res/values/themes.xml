@@ -25,6 +25,7 @@
 
     <style name="Theme.QrGame.NoActionBar.Fullscreen" parent="Theme.QrGame.NoActionBar">
         <item name="android:windowFullscreen">true</item>
+        <item name="android:fitsSystemWindows">false</item>
     </style>
 
     <style name="Theme.QrGame.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog">
